@@ -34,5 +34,13 @@ function getPostsByLocation(location) {
       }
     })
   .then(res => res.json())
-  .then(json => console.log(json));
+  .then(Post.renderPosts)
 };
+
+function upVote(event) {
+  console.log("UpVoted Button");
+}
+
+function downVote(event) {
+  console.log("DownVoted button");
+}
