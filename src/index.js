@@ -37,10 +37,7 @@ function getPostsByLocation(location) {
   .then(Post.renderPosts)
 };
 
-function upVote(event) {
-  console.log("UpVoted Button");
+function getUser() {
+  return parseInt(Math.random() * 10) + 1
 }
 
-function downVote(event) {
-  console.log("DownVoted button");
-}
