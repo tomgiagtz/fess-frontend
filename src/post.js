@@ -3,8 +3,7 @@ class Post {
   constructor(content, time, likes){
     this.content = content;
     this.time = time;
-    // this.upVotes = this.upVote(likes);
-    // this.downVotes = this.downVote(likes);
+    this.likes = likes;
   }
 
   render() {
@@ -12,9 +11,10 @@ class Post {
     let p = document.createElement("p");
     let imgUpVote = document.createElement("img");
     let imgDownVote = document.createElement("img");
+    let p2 = document.createElement("p");
 
     p.innerHTML = this.content;
-
+    p2.innerHTML = `Likes: ${this.likes}`;
 
     imgUpVote.src = "img/upVote.png";
     imgDownVote.src = "img/downVote.png";
@@ -22,37 +22,16 @@ class Post {
     imgDownVote.addEventListener('click', downVote);
 
     li.appendChild(p);
+    li.appendChild(p2);
     li.appendChild(imgUpVote);
     li.appendChild(imgDownVote);
     return li;
   }
 
-  // upVote(likes) {
-  //   let count = 0;
-  //
-  //   likes.forEach(like => {
-  //     if (like["upvote"] === true) {
-  //       count++;
-  //     }
-  //   })
-  //   return count;
-  // }
-  //
-  // downVote(likes) {
-  //   let count = 0;
-  //
-  //   likes.forEach(like => {
-  //     if (like["upvote"] === false) {
-  //       count++;
-  //     }
-  //   })
-  //   return count;
-  // }
-
   static renderPosts(posts) {
     let container = document.getElementById("post-container");
     posts.forEach(post => {
-      let newPost = new Post(post.content, post.created_at, post.likes)
+      let newPost = new Post(post.content, post.created_at, post.like_count)
       container.appendChild(newPost.render());
     })
   }
