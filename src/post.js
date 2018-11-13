@@ -151,6 +151,7 @@ class Post {
 				let container = document.getElementById("post-container")
 				container.appendChild(newPost.render());
 				console.log("Saved in DB");
+				document.getElementById('postcontent').value = ''
 		});
 		})
 	}
