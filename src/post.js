@@ -31,6 +31,7 @@ class Post {
 
 	createLike(userId, postId, upvote) {
 		console.log(getUser(), this.id, upvote)
+		
 	}
 
 	static renderPosts(posts) {
