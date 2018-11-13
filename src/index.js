@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("Connected");
     createUser();
     getPosts();
-    
+    document.getElementById("add-post-button").addEventListener("click", Post.addPost)
+
 });
 
 //URLS we will need for getting and posting

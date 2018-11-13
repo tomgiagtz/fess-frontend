@@ -132,5 +132,27 @@ class Post {
 		})
 	}
 
+	static addPost(event) {
+		let content = event.currentTarget.parentElement.children.postcontent.value;
+		let location = [];
+		navigator.geolocation.getCurrentPosition(p => {
+			location = [p.coords.latitude, p.coords.longitude]
+			fetch(GET_POSTS_URL, {
+				method: "POST",
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept': 'application/json'
+				},
+				body: JSON.stringify({content: content, location: {x: location[0], y: location[1]}})
+			})
+			.then(res => res.json())
+			.then(json => {
+				let newPost = new Post(json.content, json.created_at, json.like_count, [], json.id)
+				let container = document.getElementById("post-container")
+				container.appendChild(newPost.render());
+				console.log("Saved in DB");
+		});
+		})
+	}
 
 }
