@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Connected");
   getPosts();
+  createUser();
 });
 
 //URLS we will need for getting and posting
 const GET_POSTS_URL = "http://localhost:3000/posts"
+const USER_CREATE = "http://localhost:3000/users"
 
 
 //Getting posts by location
@@ -43,4 +45,16 @@ function upVote(event) {
 
 function downVote(event) {
   console.log("DownVoted button");
+}
+
+function createUser() {
+  fetch(USER_CREATE)
+  .then(res => res.json())
+  .then(json => {
+    document.cookie = `user=${json.id}`
+  })
+}
+
+function showCommentForm() {
+console.log("showCommentForm button");
 }

@@ -12,19 +12,28 @@ class Post {
     let imgUpVote = document.createElement("img");
     let imgDownVote = document.createElement("img");
     let p2 = document.createElement("p");
+    let button = document.createElement("button")
 
     p.innerHTML = this.content;
     p2.innerHTML = `Likes: ${this.likes}`;
+    button.innerHTML = "Comment"
+
+    li.className = "list-group-item";
+    button.className = "btn btn-warning";
 
     imgUpVote.src = "img/upVote.png";
     imgDownVote.src = "img/downVote.png";
+
     imgUpVote.addEventListener('click', upVote);
     imgDownVote.addEventListener('click', downVote);
+    button.addEventListener('click', showCommentForm)
 
     li.appendChild(p);
-    li.appendChild(p2);
+    li.innerHTML += `Likes: ${this.likes}    `;
+    // li.appendChild(p2);
     li.appendChild(imgUpVote);
     li.appendChild(imgDownVote);
+    li.appendChild(button);
     return li;
   }
 
