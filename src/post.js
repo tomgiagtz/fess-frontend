@@ -58,9 +58,16 @@ class Post {
 						upvote: upvote
 					}
 				})
-			}).then(resp => this.renderVote(upvote ? 1 : -1))
+			}).then(resp => resp.json())
+			.then(json => {
+				this.currVote.id = json.id
+				this.renderVote(upvote ? 1 : -1)
+			})
+
 			this.currVote.vote = upvote
+
 		} else if (this.currVote.vote === !upvote) {
+
 			console.log('put')
 			fetch('http://localhost:3000/likes/' + this.currVote.id, {
 				body: JSON.stringify({ id: this.currVote.id }),
@@ -69,13 +76,25 @@ class Post {
 					'Content-Type': 'application/json',
 					'Accept': 'application/json'
 				}
-			}).then(resp => this.renderVote(upvote ? 2 : -2))
+			})
+			.then(resp => resp.json())
+			.then(json => {
+				console.log(json)
+				this.renderVote(upvote ? 2 : -2)
+			})
 			this.currVote.vote = upvote
+
 		} else {
+
 			console.log('delete')
 			fetch('http://localhost:3000/likes/' + this.currVote.id, {
-				method: 'delete'
-			}).then(resp => this.renderVote(upvote ? -1 : 1))
+					method: 'delete'
+				})
+				.then(resp => resp.json())
+				.then(json => {
+					console.log(json)
+					this.renderVote(upvote ? -1 : 1)
+				})
 			this.currVote.vote = null;
 
 		}
@@ -138,21 +157,21 @@ class Post {
 		navigator.geolocation.getCurrentPosition(p => {
 			location = [p.coords.latitude, p.coords.longitude]
 			fetch(GET_POSTS_URL, {
-				method: "POST",
-				headers: {
-					'Content-Type': 'application/json',
-					'Accept': 'application/json'
-				},
-				body: JSON.stringify({content: content, location: {x: location[0], y: location[1]}})
-			})
-			.then(res => res.json())
-			.then(json => {
-				let newPost = new Post(json.content, json.created_at, json.like_count, [], json.id)
-				let container = document.getElementById("post-container")
-				container.appendChild(newPost.render());
-				console.log("Saved in DB");
-				document.getElementById('postcontent').value = ''
-		});
+					method: "POST",
+					headers: {
+						'Content-Type': 'application/json',
+						'Accept': 'application/json'
+					},
+					body: JSON.stringify({ content: content, location: { x: location[0], y: location[1] } })
+				})
+				.then(res => res.json())
+				.then(json => {
+					let newPost = new Post(json.content, json.created_at, json.like_count, [], json.id)
+					let container = document.getElementById("post-container")
+					container.appendChild(newPost.render());
+					console.log("Saved in DB");
+					document.getElementById('postcontent').value = ''
+				});
 		})
 	}
 
