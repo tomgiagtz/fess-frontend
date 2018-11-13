@@ -1,8 +1,8 @@
 {
-  "name": "ignacioespino",
+  "name": "fess-frontend",
   "version": "1.0.0",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "4.13.3"
