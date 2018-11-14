@@ -9,15 +9,12 @@ class Post {
 		this.currVote = this.getVote(getUserId())
 	}
 
-	setVoteImg(voteDiv) {
-		if (this.currVote.vote === null) {return}
-		this.currVote.vote ? this.toggleUpVote(voteDiv) : this.toggleDownVote(voteDiv)
-	}
-
+	//returns like url
 	getLikesUrl() {
 		return 'http://localhost:3000/likes'
 	}
 
+	//renders a post
 	render() {
 		let li = document.createElement("li");
 		let p = document.createElement("p");
@@ -34,9 +31,10 @@ class Post {
 		span.className = "sub-text";
 
 		button.addEventListener('click', showCommentForm)
-		
+
 		let voteDiv = this.renderVotes()
 		this.setVoteImg(voteDiv)
+
 		li.appendChild(p);
 		li.appendChild(span)
 		li.appendChild(voteDiv)
@@ -44,7 +42,7 @@ class Post {
 
 		return li;
 	}
-
+	//handles logic for a vote event, making the correct database call and rendering the new vote
 	vote(userId, voteType) {
 		voteType ? this.toggleUpVote() : this.toggleDownVote()
 		if (this.currVote.vote === null) {
@@ -54,12 +52,11 @@ class Post {
 			this.updateVote(voteType)
 			!voteType ? this.toggleUpVote() : this.toggleDownVote()
 
-
 		} else {
 			this.deleteVote(voteType)
 		}
 	}
-
+	//deletes a vote
 	deleteVote(voteType) {
 		console.log('delete')
 		fetch('http://localhost:3000/likes/' + this.currVote.id, {
@@ -68,11 +65,11 @@ class Post {
 			.then(resp => resp.json())
 			.then(json => {
 				console.log(json)
-				this.renderVote(this.currVote.vote, voteType)
+				this.renderVote(voteType)
 				this.currVote.vote = null;
 			})
 	}
-
+	//executes put for changing a vote
 	updateVote(voteType) {
 		console.log('put')
 		fetch('http://localhost:3000/likes/' + this.currVote.id, {
@@ -86,61 +83,50 @@ class Post {
 			.then(resp => resp.json())
 			.then(json => {
 				console.log(json)
-				this.renderVote(this.currVote.vote, voteType)
+				this.renderVote(voteType)
 				this.currVote.vote = voteType
 			})
 	}
-
+	// executes POST for new vote
 	newVote(userId, voteType) {
-		console.log('create')
-		fetch(this.getLikesUrl(), {
-				method: 'post',
-				headers: {
-					'Content-Type': 'application/json',
-					'Accept': 'application/json'
-				},
-				body: JSON.stringify({
-					like: {
-						user_id: userId,
-						post_id: this.id,
-						upvote: voteType
-					}
+			console.log('create')
+			fetch(this.getLikesUrl(), {
+					method: 'post',
+					headers: {
+						'Content-Type': 'application/json',
+						'Accept': 'application/json'
+					},
+					body: JSON.stringify({
+						like: {
+							user_id: userId,
+							post_id: this.id,
+							upvote: voteType
+						}
+					})
 				})
-			})
-			.then(resp => resp.json())
-			.then(json => {
-				this.currVote.id = json.id
-				this.renderVote(this.currVote.vote, voteType)
-				this.currVote.vote = voteType
-			})
-	}
+				.then(resp => resp.json())
+				.then(json => {
+					this.currVote.id = json.id
+					this.renderVote(voteType)
+					this.currVote.vote = voteType
+				})
+		}
 
-	renderVote(currVote, newVote) {
+		
+	//takes the current vot and new vote
+	renderVote(newVote) {
 		let diff = 0;
-		switch (currVote) {
+		switch (this.currVote.vote) {
 			case null:
-				if (newVote) {
-					diff = 1
-				} else {
-					diff = -1
-				}
+				newVote ? diff = 1 : diff = -1
 				break
 			case newVote:
-				if (newVote) {
-					diff = -1
-				} else {
-					diff = 1
-				}
+				newVote ? diff = -1 : diff = 1
 				break
 			case !newVote:
-				
-				if (newVote) {
-					diff = 2
-				} else {
-					diff = -2
-				}
-				break
 
+				newVote ? diff = 2 : diff = -2
+				break
 		}
 
 		let voteLabel = document.querySelector('#likes-' + this.id)
@@ -162,6 +148,8 @@ class Post {
 		})
 		return res
 	}
+
+	//renders voting section of post
 
 	renderVotes() {
 		let voteDiv = document.createElement("div")
@@ -187,6 +175,8 @@ class Post {
 		return voteDiv
 	}
 
+	//renders all posts
+
 	static renderPosts(posts) {
 		let container = document.getElementById("post-container");
 		posts.forEach(post => {
@@ -194,6 +184,8 @@ class Post {
 			container.appendChild(newPost.render());
 		})
 	}
+
+	//POSTs a post to databse
 
 	static addPost(event) {
 		let content = event.currentTarget.parentElement.children.postcontent.value;
@@ -219,21 +211,29 @@ class Post {
 		})
 	}
 
-	toggleUpVote(voteDiv=document) {
-		let vote = voteDiv.querySelector('#up-vote-' + this.id)
-		this.toggleVoteImg(vote)
+	//sets imgs on render of post
+
+	setVoteImg(voteDiv) {
+		if (this.currVote.vote === null) { return }
+		this.currVote.vote ? this.toggleUpVote(voteDiv) : this.toggleDownVote(voteDiv)
+	}
+	// toggle Up and toggle Down select the vote img for respective buttons 
+
+	toggleUpVote(voteDiv = document) {
+		let voteImg = voteDiv.querySelector('#up-vote-' + this.id)
+		this.toggleVoteImg(voteImg)
 	}
 
-	toggleDownVote(voteDiv=document) {
-		let vote = voteDiv.querySelector('#down-vote-' + this.id)
-		this.toggleVoteImg(vote)
+	toggleDownVote(voteDiv = document) {
+		let voteImg = voteDiv.querySelector('#down-vote-' + this.id)
+		this.toggleVoteImg(voteImg)
 	}
-
-	toggleVoteImg(vote) {
-		if (vote.src.endsWith('outline.svg')) {
-			vote.src = vote.src.replace('outline', 'fill')
+	//takes a voteImg and toggles it between filled and not
+	toggleVoteImg(voteImg) {
+		if (voteImg.src.endsWith('outline.svg')) {
+			voteImg.src = voteImg.src.replace('outline', 'fill')
 		} else {
-			vote.src = vote.src.replace('fill', 'outline')
+			voteImg.src = voteImg.src.replace('fill', 'outline')
 		}
 	}
 
