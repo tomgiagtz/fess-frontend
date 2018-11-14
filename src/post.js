@@ -6,9 +6,7 @@ class Post {
 		this.likeCount = likeCount;
 		this.likes = likes
 		this.id = id;
-
 		this.currVote = this.getVote(getUserId())
-
 	}
 
 	getLikesUrl() {
@@ -32,7 +30,7 @@ class Post {
 
 		button.addEventListener('click', showCommentForm)
 
-		let voteDiv = this.renderVoting()
+		let voteDiv = this.renderVotes()
 
 		li.appendChild(p);
 		li.appendChild(span)
@@ -41,35 +39,35 @@ class Post {
 		return li;
 	}
 
-	createVote(userId, upvote) {
+	vote(userId, voteType) {
 
 		if (this.currVote.vote === null) {
-			console.log('create')
-			fetch(this.getLikesUrl(), {
-				method: 'post',
-				headers: {
-					'Content-Type': 'application/json',
-					'Accept': 'application/json'
-				},
-				body: JSON.stringify({
-					like: {
-						user_id: userId,
-						post_id: this.id,
-						upvote: upvote
-					}
-				})
-			}).then(resp => resp.json())
-			.then(json => {
-				this.currVote.id = json.id
-				this.renderVote(upvote ? 1 : -1)
+			this.newVote(userId, voteType)
+
+		} else if (this.currVote.vote === !voteType) {
+			this.updateVote(voteType)
+
+		} else {
+			this.deleteVote(voteType)
+		}
+	}
+
+	deleteVote(voteType) {
+		console.log('delete')
+		fetch('http://localhost:3000/likes/' + this.currVote.id, {
+				method: 'delete'
 			})
+			.then(resp => resp.json())
+			.then(json => {
+				console.log(json)
+				this.renderVote(this.currVote.vote, voteType)
+				this.currVote.vote = null;
+			})
+	}
 
-			this.currVote.vote = upvote
-
-		} else if (this.currVote.vote === !upvote) {
-
-			console.log('put')
-			fetch('http://localhost:3000/likes/' + this.currVote.id, {
+	updateVote(voteType) {
+		console.log('put')
+		fetch('http://localhost:3000/likes/' + this.currVote.id, {
 				body: JSON.stringify({ id: this.currVote.id }),
 				method: 'put',
 				headers: {
@@ -80,30 +78,54 @@ class Post {
 			.then(resp => resp.json())
 			.then(json => {
 				console.log(json)
-				this.renderVote(upvote ? 2 : -2)
+				this.renderVote(this.currVote.vote, voteType)
+				this.currVote.vote = voteType
 			})
-			this.currVote.vote = upvote
-
-		} else {
-
-			console.log('delete')
-			fetch('http://localhost:3000/likes/' + this.currVote.id, {
-					method: 'delete'
-				})
-				.then(resp => resp.json())
-				.then(json => {
-					console.log(json)
-					this.renderVote(upvote ? -1 : 1)
-				})
-			this.currVote.vote = null;
-
-		}
 	}
 
-	renderVote(diff) {
+	newVote(userId, voteType) {
+		console.log('create')
+		fetch(this.getLikesUrl(), {
+				method: 'post',
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept': 'application/json'
+				},
+				body: JSON.stringify({
+					like: {
+						user_id: userId,
+						post_id: this.id,
+						upvote: voteType
+					}
+				})
+			})
+			.then(resp => resp.json())
+			.then(json => {
+				this.currVote.id = json.id
+				this.renderVote(this.currVote.vote, voteType)
+				this.currVote.vote = voteType
+			})
+	}
+
+	renderVote(currVote, newVote) {
+		let diff = 0;
+		switch (currVote) {
+			case null:
+				newVote ? diff = 1 : diff = -1
+				break
+			case newVote:
+				newVote ? diff = -1 : diff = 1
+				break
+			case !newVote:
+				newVote ? diff = 2 : diff = -2
+				break
+
+		}
+
 		let voteLabel = document.querySelector('#likes-' + this.id)
 		voteLabel.innerText = parseInt(voteLabel.innerText) + diff
 	}
+
 	//returns true for upvote, false for downvote and null for no vote
 	getVote(userId) {
 		let res = {
@@ -120,16 +142,16 @@ class Post {
 		return res
 	}
 
-	renderVoting() {
+	renderVotes() {
 		let voteDiv = document.createElement("div")
 
 		let upVoteBtn = document.createElement("img");
 		upVoteBtn.src = "img/upVote.png";
-		upVoteBtn.addEventListener('click', e => this.createVote(getUserId(), true));
+		upVoteBtn.addEventListener('click', e => this.vote(getUserId(), true));
 
 		let downVoteBtn = document.createElement("img");
 		downVoteBtn.src = "img/downVote.png";
-		downVoteBtn.addEventListener('click', e => this.createVote(getUserId(), false));
+		downVoteBtn.addEventListener('click', e => this.vote(getUserId(), false));
 
 		let likeLabel = document.createElement("label");
 		likeLabel.innerHTML = `${this.likeCount}`;
@@ -140,7 +162,6 @@ class Post {
 		voteDiv.appendChild(downVoteBtn)
 
 		return voteDiv
-
 	}
 
 	static renderPosts(posts) {
