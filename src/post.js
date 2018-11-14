@@ -49,7 +49,7 @@ class Post {
 			this.newVote(userId, voteType)
 
 		} else if (this.currVote.vote === !voteType) {
-			this.updateVote(voteType)
+			this.updateVote(voteType) 
 			!voteType ? this.toggleUpVote() : this.toggleDownVote()
 
 		} else {
@@ -64,10 +64,10 @@ class Post {
 			})
 			.then(resp => resp.json())
 			.then(json => {
-				console.log(json)
-				this.renderVote(voteType)
-				this.currVote.vote = null;
+				// console.log(json)
 			})
+		this.renderVote(voteType)
+		this.currVote.vote = null;
 	}
 	//executes put for changing a vote
 	updateVote(voteType) {
@@ -82,37 +82,35 @@ class Post {
 			})
 			.then(resp => resp.json())
 			.then(json => {
-				console.log(json)
-				this.renderVote(voteType)
-				this.currVote.vote = voteType
+				// console.log(json)
 			})
+		this.renderVote(voteType)
+		this.currVote.vote = voteType
 	}
 	// executes POST for new vote
 	newVote(userId, voteType) {
-			console.log('create')
-			fetch(this.getLikesUrl(), {
-					method: 'post',
-					headers: {
-						'Content-Type': 'application/json',
-						'Accept': 'application/json'
-					},
-					body: JSON.stringify({
-						like: {
-							user_id: userId,
-							post_id: this.id,
-							upvote: voteType
-						}
-					})
+		console.log('create')
+		fetch(this.getLikesUrl(), {
+				method: 'post',
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept': 'application/json'
+				},
+				body: JSON.stringify({
+					like: {
+						user_id: userId,
+						post_id: this.id,
+						upvote: voteType
+					}
 				})
-				.then(resp => resp.json())
-				.then(json => {
-					this.currVote.id = json.id
-					this.renderVote(voteType)
-					this.currVote.vote = voteType
-				})
-		}
+			})
+			.then(resp => resp.json())
+			.then(json => {this.currVote.id = json.id})
+		this.renderVote(voteType)
+		this.currVote.vote = voteType
+	}
 
-		
+
 	//takes the current vot and new vote
 	renderVote(newVote) {
 		let diff = 0;
