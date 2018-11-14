@@ -9,6 +9,11 @@ class Post {
 		this.currVote = this.getVote(getUserId())
 	}
 
+	setVoteImg(voteDiv) {
+		if (this.currVote.vote === null) {return}
+		this.currVote.vote ? this.toggleUpVote(voteDiv) : this.toggleDownVote(voteDiv)
+	}
+
 	getLikesUrl() {
 		return 'http://localhost:3000/likes'
 	}
@@ -29,23 +34,26 @@ class Post {
 		span.className = "sub-text";
 
 		button.addEventListener('click', showCommentForm)
-
+		
 		let voteDiv = this.renderVotes()
-
+		this.setVoteImg(voteDiv)
 		li.appendChild(p);
 		li.appendChild(span)
 		li.appendChild(voteDiv)
 		li.appendChild(button);
+
 		return li;
 	}
 
 	vote(userId, voteType) {
-
+		voteType ? this.toggleUpVote() : this.toggleDownVote()
 		if (this.currVote.vote === null) {
 			this.newVote(userId, voteType)
 
 		} else if (this.currVote.vote === !voteType) {
 			this.updateVote(voteType)
+			!voteType ? this.toggleUpVote() : this.toggleDownVote()
+
 
 		} else {
 			this.deleteVote(voteType)
@@ -111,13 +119,26 @@ class Post {
 		let diff = 0;
 		switch (currVote) {
 			case null:
-				newVote ? diff = 1 : diff = -1
+				if (newVote) {
+					diff = 1
+				} else {
+					diff = -1
+				}
 				break
 			case newVote:
-				newVote ? diff = -1 : diff = 1
+				if (newVote) {
+					diff = -1
+				} else {
+					diff = 1
+				}
 				break
 			case !newVote:
-				newVote ? diff = 2 : diff = -2
+				
+				if (newVote) {
+					diff = 2
+				} else {
+					diff = -2
+				}
 				break
 
 		}
@@ -146,11 +167,13 @@ class Post {
 		let voteDiv = document.createElement("div")
 
 		let upVoteBtn = document.createElement("img");
-		upVoteBtn.src = "img/upVote.png";
+		upVoteBtn.id = 'up-vote-' + this.id
+		upVoteBtn.src = "img/arrow-up-outline.svg";
 		upVoteBtn.addEventListener('click', e => this.vote(getUserId(), true));
 
 		let downVoteBtn = document.createElement("img");
-		downVoteBtn.src = "img/downVote.png";
+		downVoteBtn.id = 'down-vote-' + this.id
+		downVoteBtn.src = "img/arrow-down-outline.svg";
 		downVoteBtn.addEventListener('click', e => this.vote(getUserId(), false));
 
 		let likeLabel = document.createElement("label");
@@ -194,6 +217,24 @@ class Post {
 					document.getElementById('postcontent').value = ''
 				});
 		})
+	}
+
+	toggleUpVote(voteDiv=document) {
+		let vote = voteDiv.querySelector('#up-vote-' + this.id)
+		this.toggleVoteImg(vote)
+	}
+
+	toggleDownVote(voteDiv=document) {
+		let vote = voteDiv.querySelector('#down-vote-' + this.id)
+		this.toggleVoteImg(vote)
+	}
+
+	toggleVoteImg(vote) {
+		if (vote.src.endsWith('outline.svg')) {
+			vote.src = vote.src.replace('outline', 'fill')
+		} else {
+			vote.src = vote.src.replace('fill', 'outline')
+		}
 	}
 
 }
