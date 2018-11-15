@@ -9,10 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 //URLS we will need for getting and posting
-const GET_POSTS_URL = "http://localhost:3000/posts";
-const USER_URL = "http://localhost:3000/users";
-const COMMENTS_URL = "http://localhost:3000/comments"
-const HEADERS = {'Content-Type': 'application/json','Accept': 'application/json'}
+function headers() {return {'Content-Type': 'application/json','Accept': 'application/json'}}
+function postURL () {return "http://localhost:3000/posts"}
+function likeURL () {return "http://localhost:3000/likes"}
+function userURL () {return "http://localhost:3000/users"}
+function commentURL () {return "http://localhost:3000/comments"}
 
 
 //Getting posts by location
@@ -21,21 +22,13 @@ function getPosts() {
     	LOCATION = navigator.geolocation
         LOCATION.getCurrentPosition(getPostsByLocation);
     } else {
-        fetch(GET_POSTS_URL, {
-                headers: {
-                    location: "false"
-                }
-            })
-            .then(res => res.json())
-            .then(json => {
-                console.log("Got post without location");
-            });
-        console.log("Geolocation is not supported by this browser.");
+      window.alert("Your browswer does not support location")
+      throw "Browser does not have location"
     }
 };
 
 function getPostsByLocation(location) {
-    fetch(GET_POSTS_URL, {
+    fetch(postURL(), {
             headers: {
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
@@ -45,10 +38,14 @@ function getPostsByLocation(location) {
         })
         .then(res => res.json())
         .then(json => Post.renderPosts(json, document.getElementById("nearest-container")))
+        .catch(error => {
+          throw "Error in getPostsByLocation"
+          throw error
+        })
 };
 
 function getRecentPosts(location) {
-    fetch(GET_POSTS_URL, {
+    fetch(postURL(), {
             headers: {
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
@@ -66,7 +63,7 @@ function getUserId() {
 
 function createUser() {
     if (!getUserId()) {
-        fetch(USER_URL)
+        fetch(userURL())
             .then(res => res.json())
             .then(json => {
                 document.cookie = `user=${json.id}`
@@ -103,9 +100,10 @@ function renderComment(comment) {
   p.innerHTML = comment.content;
   span.innerHTML = time.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " + time.toLocaleTimeString('en-US');
 
+  p.className = "comment-text"
   li.className = "list-group-item"
 	span.className = "sub-text";
-  
+
   li.appendChild(p);
   li.appendChild(span);
   ul.appendChild(li);
