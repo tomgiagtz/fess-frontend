@@ -12,13 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function headers() { return { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
 
-function postURL() { return "http://localhost:3000/posts" }
+function postURL() { return "https://fess-backend.herokuapp.com/posts" }
 
-function likeURL() { return "http://localhost:3000/likes" }
+function likeURL() { return "https://fess-backend.herokuapp.com/likes" }
 
-function userURL() { return "http://localhost:3000/users" }
+function userURL() { return "https://fess-backend.herokuapp.com/users" }
 
-function commentURL() { return "http://localhost:3000/comments" }
+function commentURL() { return "https://fess-backend.herokuapp.com/comments" }
 
 
 //Getting posts by location
