@@ -133,7 +133,7 @@ class Post {
 		
 		
 
-		let voteLabels = document.querySelectorAll('#likes-' + this.id)
+		let voteLabels = document.querySelectorAll('.likes-' + this.id)
 		voteLabels.forEach(label=> label.innerText = parseInt(label.innerText) + diff)
 
 	}
@@ -188,18 +188,18 @@ class Post {
 		let voteDiv = document.createElement("div")
 
 		let upVoteBtn = document.createElement("img");
-		upVoteBtn.id = 'up-vote-' + this.id
+		upVoteBtn.className = 'up-vote-' + this.id
 		upVoteBtn.src = "img/arrow-up-outline.svg";
 		upVoteBtn.addEventListener('click', e => this.vote(getUserId(), true));
 
 		let downVoteBtn = document.createElement("img");
-		downVoteBtn.id = 'down-vote-' + this.id
+		downVoteBtn.className = 'down-vote-' + this.id
 		downVoteBtn.src = "img/arrow-down-outline.svg";
 		downVoteBtn.addEventListener('click', e => this.vote(getUserId(), false));
 
 		let likeLabel = document.createElement("label");
 		likeLabel.innerHTML = `${this.likeCount}`;
-		likeLabel.id = 'likes-' + this.id
+		likeLabel.className = 'likes-' + this.id
 
 		voteDiv.appendChild(upVoteBtn)
 		voteDiv.appendChild(likeLabel)
@@ -259,12 +259,12 @@ class Post {
 	// toggle Up and toggle Down select the vote img for respective buttons
 
 	toggleUpVote(voteDiv = document) {
-		let voteImgs = voteDiv.querySelectorAll('#up-vote-' + this.id)
+		let voteImgs = voteDiv.querySelectorAll('.up-vote-' + this.id)
 		voteImgs.forEach( img => this.toggleVoteImg(img) )
 	}
 
 	toggleDownVote(voteDiv = document) {
-		let voteImgs = voteDiv.querySelectorAll('#down-vote-' + this.id)
+		let voteImgs = voteDiv.querySelectorAll('.down-vote-' + this.id)
 		voteImgs.forEach( img => this.toggleVoteImg(img) )
 	}
 	//takes a voteImg and toggles it between filled and not
