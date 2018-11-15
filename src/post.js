@@ -114,7 +114,7 @@ class Post {
 	}
 
 
-	//takes the current vot and new vote
+	//takes the current vote and new vote
 	renderVote(newVote) {
 		let diff = 0;
 		switch (this.currVote.vote) {
@@ -129,6 +129,10 @@ class Post {
 				newVote ? diff = 2 : diff = -2
 				break
 		}
+
+		let voteLabel = document.querySelector('#likes-' + this.id)
+		voteLabel.innerText = parseInt(voteLabel.innerText) + diff
+
 	}
 
 	static createComment(event) {
@@ -155,12 +159,6 @@ class Post {
 		.then(json => {
 			console.log(json);
 		})
-	}
-
-
-	renderVote(diff) {
-		let voteLabel = document.querySelector('#likes-' + this.id)
-		voteLabel.innerText = parseInt(voteLabel.innerText) + diff
 	}
 
 	//returns true for upvote, false for downvote and null for no vote
