@@ -1,0 +1,38 @@
+img {
+  height: 20px;
+  margin: 10px;
+}
+.sub-text {
+  font-size:11px;
+}
+
+.limit-width-app {
+  background-color: #D3D3D3;
+  max-width: 650px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.limit-300 {
+  max-width: 300px;
+  margin-right: auto;
+  margin-left: auto;
+}
+textarea {
+  height: 38px;
+}
+header {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px;
+  font-size: 20px;
+  margin-bottom: 10px;
+  font-family: sans-serif;
+  border-radius: 8px
+}
+#comment-text {
+  font-size: 14px;
+}
+body {
+  background-color: #D3D3D3;
+}

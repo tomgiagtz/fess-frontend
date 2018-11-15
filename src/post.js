@@ -14,11 +14,6 @@ class Post {
 
 	}
 
-	//returns like url
-	getLikesUrl() {
-		return 'http://localhost:3000/likes'
-	}
-
 	//renders a post
 	render() {
 		let li = document.createElement("li");
@@ -55,41 +50,36 @@ class Post {
 		if (this.currVote.vote === null) {
 			this.newVote(userId, voteType)
 
-		} else {
-			fetch('http://localhost:3000/likes/' + this.currVote.id)
-				.then(resp => resp.json())
-				.then(json => console.log(json))
-			if (this.currVote.vote === !voteType) {
-				this.updateVote(voteType)
+		} else if (this.currVote.vote === !voteType) {
+			this.updateVote(voteType)
 
-			} else {
-				this.deleteVote(voteType)
-			}
+		} else {
+			this.deleteVote(voteType)
 		}
 	}
+
 	//deletes a vote
 	deleteVote(voteType) {
 		console.log('delete')
-		fetch('http://localhost:3000/likes/' + this.currVote.id, {
+		console.trace()
+		fetch(`${likeURL()}/${this.currVote.id}`, {
 				method: 'delete'
 			})
 			.then(resp => resp.json())
 			.then(json => {
 				// console.log(json)
+				this.currVote.vote = null;
 			})
 		this.renderVote(voteType)
-		this.currVote.vote = null;
+
 	}
 	//executes put for changing a vote
 	updateVote(voteType) {
 		console.log('put')
-		fetch('http://localhost:3000/likes/' + this.currVote.id, {
+		fetch(likeURL() + '/' + this.currVote.id, {
 				body: JSON.stringify({ id: this.currVote.id }),
 				method: 'put',
-				headers: {
-					'Content-Type': 'application/json',
-					'Accept': 'application/json'
-				}
+				headers: headers()
 			})
 			.then(resp => resp.json())
 			.then(json => {
@@ -101,9 +91,9 @@ class Post {
 	// executes POST for new vote
 	newVote(userId, voteType) {
 		console.log('create')
-		fetch(this.getLikesUrl(), {
+		fetch(likeURL(), {
 				method: 'post',
-				headers: HEADERS,
+				headers: headers(),
 				body: JSON.stringify({
 					like: {
 						user_id: userId,
@@ -137,8 +127,6 @@ class Post {
 		}
 
 
-
-
 		let voteLabels = document.querySelectorAll('.likes-' + this.id)
 		voteLabels.forEach(label => label.innerText = parseInt(label.innerText) + diff)
 
@@ -146,7 +134,6 @@ class Post {
 
 	static createComment(event) {
 		let content = event.currentTarget.parentElement.parentElement.children["comment-input"].value;
-		// Need to add
 		let userId = document.cookie.split('=')[1];
 		let post = Post.findByPostId(parseInt(event.currentTarget.dataset.post))[0];
 		post.postComment(content, userId);
@@ -154,9 +141,9 @@ class Post {
 
 
 	postComment(content, userId) {
-		fetch(COMMENTS_URL, {
+		fetch(commentURL(), {
 				method: "POST",
-				headers: HEADERS,
+				headers: headers(),
 				body: JSON.stringify({
 					comment: {
 						user_id: userId,
@@ -168,7 +155,9 @@ class Post {
 			.then(json => {
 				this.comments.push(json);
 				renderComment(json);
-				// console.log(json);
+				document.getElementById("comment-input").value = "";
+			}).catch(e => {
+				window.alert("Your comment did not go through");
 			})
 	}
 
@@ -231,12 +220,9 @@ class Post {
 		let location = [];
 		navigator.geolocation.getCurrentPosition(p => {
 			location = [p.coords.latitude, p.coords.longitude]
-			fetch(GET_POSTS_URL, {
+			fetch(postURL(), {
 					method: "POST",
-					headers: {
-						'Content-Type': 'application/json',
-						'Accept': 'application/json'
-					},
+					headers: headers(),
 					body: JSON.stringify({ content: content, location: { x: location[0], y: location[1] } })
 				})
 				.then(res => res.json())

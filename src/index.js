@@ -9,10 +9,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 //URLS we will need for getting and posting
-const GET_POSTS_URL = "http://localhost:3000/posts";
-const USER_URL = "http://localhost:3000/users";
-const COMMENTS_URL = "http://localhost:3000/comments"
-const HEADERS = { 'Content-Type': 'application/json', 'Accept': 'application/json' }
+
+function headers() { return { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
+
+function postURL() { return "http://localhost:3000/posts" }
+
+function likeURL() { return "http://localhost:3000/likes" }
+
+function userURL() { return "http://localhost:3000/users" }
+
+function commentURL() { return "http://localhost:3000/comments" }
 
 
 //Getting posts by location
@@ -21,9 +27,11 @@ function getPosts() {
 		LOCATION = navigator.geolocation
 		LOCATION.getCurrentPosition(getPostsByLocation)
 	} else {
-		fetch(GET_POSTS_URL, {
+		fetch(postURL(), {
 				headers: {
-					location: "false"
+					latitude: location.coords.latitude,
+					longitude: location.coords.longitude,
+					location: "true"
 				}
 			})
 			.then(res => res.json())
@@ -36,7 +44,7 @@ function getPosts() {
 
 function getPostsByLocation(location) {
 	console.log('another fetch')
-	fetch(GET_POSTS_URL, {
+	fetch(postURL(), {
 			headers: {
 				latitude: location.coords.latitude,
 				longitude: location.coords.longitude,
@@ -54,7 +62,7 @@ function getPostsByLocation(location) {
 
 function getRecentPosts(location) {
 	console.log('another fetch')
-	fetch(GET_POSTS_URL, {
+	fetch(postURL(), {
 			headers: {
 				latitude: location.coords.latitude,
 				longitude: location.coords.longitude,
@@ -67,7 +75,44 @@ function getRecentPosts(location) {
 			// clearChildren(container)
 			Post.renderPosts(json, container)
 		})
-};
+
+	//     if (navigator.geolocation) {
+	//     	LOCATION = navigator.geolocation
+	//         LOCATION.getCurrentPosition(getPostsByLocation);
+	//     } else {
+	//       window.alert("Your browswer does not support location")
+	//       throw "Browser does not have location"
+	//     }
+	// };
+
+	// function getPostsByLocation(location) {
+	//     fetch(postURL(), {
+	//             headers: {
+	//                 latitude: location.coords.latitude,
+	//                 longitude: location.coords.longitude,
+	//                 location: "true",
+	//                 nearest: "true"
+	//             }
+	//         })
+	//         .then(res => res.json())
+	//         .then(json => Post.renderPosts(json, document.getElementById("nearest-container")))
+	//         .catch(error => {
+	//           throw "Error in getPostsByLocation"
+	//           throw error
+	//         })
+	// };
+
+	// function getRecentPosts(location) {
+	//     fetch(postURL(), {
+	//             headers: {
+	//                 latitude: location.coords.latitude,
+	//                 longitude: location.coords.longitude,
+	//                 location: "true"
+	//             }
+	//         })
+	//         .then(res => res.json())
+	//         .then(json => Post.renderPosts(json, document.getElementById("recent-container")))
+}
 
 // function clearChildren(node) {
 // 	// let firstChild = node.firstChild
@@ -86,7 +131,7 @@ function getUserId() {
 
 function createUser() {
 	if (!getUserId()) {
-		fetch(USER_URL)
+		fetch(userURL())
 			.then(res => res.json())
 			.then(json => {
 				document.cookie = `user=${json.id}`
@@ -114,9 +159,21 @@ function showModal(event) {
 }
 
 function renderComment(comment) {
+
 	let ul = document.getElementById("modal-ul");
 	let li = document.createElement('li');
+	let p = document.createElement('p');
+	let span = document.createElement('span');
+	let time = new Date(comment.created_at);
+
+	p.innerHTML = comment.content;
+	span.innerHTML = time.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " + time.toLocaleTimeString('en-US');
+
+	p.className = "comment-text"
 	li.className = "list-group-item"
-	li.innerHTML = comment.content;
+	span.className = "sub-text";
+
+	li.appendChild(p);
+	li.appendChild(span);
 	ul.appendChild(li);
 }
