@@ -1,14 +1,16 @@
+let allPosts = [];
+
 class Post {
 
-	constructor(content, time, likeCount, likes, id) {
+	constructor(content, time, likeCount, likes, id, comments = []) {
 		this.content = content;
 		this.time = new Date(time);
 		this.likeCount = likeCount;
 		this.likes = likes
 		this.id = id;
-
-		this.currVote = this.getVote(getUserId())
-
+		this.currVote = this.getVote(getUserId());
+		this.comments = comments;
+		allPosts.push(this);
 	}
 
 	getLikesUrl() {
@@ -23,6 +25,7 @@ class Post {
 
 		p.innerHTML = this.content;
 		button.innerHTML = "Comment";
+		button.dataset.post = `${this.id}`;
 		span.innerHTML = this.time.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
 
@@ -30,7 +33,7 @@ class Post {
 		button.className = "btn btn-warning";
 		span.className = "sub-text";
 
-		button.addEventListener('click', showCommentForm)
+		button.addEventListener('click', showModal)
 
 		let voteDiv = this.renderVoting()
 
@@ -47,10 +50,7 @@ class Post {
 			console.log('create')
 			fetch(this.getLikesUrl(), {
 				method: 'post',
-				headers: {
-					'Content-Type': 'application/json',
-					'Accept': 'application/json'
-				},
+				headers: HEADERS,
 				body: JSON.stringify({
 					like: {
 						user_id: userId,
@@ -65,10 +65,7 @@ class Post {
 			fetch('http://localhost:3000/likes/' + this.currVote.id, {
 				body: JSON.stringify({ id: this.currVote.id }),
 				method: 'put',
-				headers: {
-					'Content-Type': 'application/json',
-					'Accept': 'application/json'
-				}
+				headers: HEADERS
 			}).then(resp => this.renderVote(upvote ? 2 : -2))
 			this.currVote.vote = upvote
 		} else {
@@ -80,6 +77,30 @@ class Post {
 
 		}
 	}
+
+	static createComment(event) {
+		let content = event.currentTarget.parentElement.parentElement.children["comment-input"].value;
+		// postComment(content, 1)
+		//render comment would be nexy
+	}
+
+	postComment(content, userId) {
+		fetch(COMMENTS_URL, {
+			method: "POST",
+			headers: HEADERS,
+			body: JSON.stringify({
+				comment: {
+					user_id: userId,
+					post_id: this.id,
+					content: content
+				}
+			})
+		}).then(res => res.json())
+		.then(json => {
+			console.log(json);
+		})
+	}
+
 
 	renderVote(diff) {
 		let voteLabel = document.querySelector('#likes-' + this.id)
@@ -127,7 +148,7 @@ class Post {
 	static renderPosts(posts) {
 		let container = document.getElementById("post-container");
 		posts.forEach(post => {
-			let newPost = new Post(post.content, post.created_at, post.like_count, post.likes, post.id)
+			let newPost = new Post(post.content, post.created_at, post.like_count, post.likes, post.id, post.comments)
 			container.appendChild(newPost.render());
 		})
 	}
@@ -139,10 +160,7 @@ class Post {
 			location = [p.coords.latitude, p.coords.longitude]
 			fetch(GET_POSTS_URL, {
 				method: "POST",
-				headers: {
-					'Content-Type': 'application/json',
-					'Accept': 'application/json'
-				},
+				headers: HEADERS,
 				body: JSON.stringify({content: content, location: {x: location[0], y: location[1]}})
 			})
 			.then(res => res.json())
@@ -152,6 +170,12 @@ class Post {
 				container.appendChild(newPost.render());
 				console.log("Saved in DB");
 		});
+		})
+	}
+
+	static findByPostId(id) {
+		return allPosts.filter(post => {
+			return post.id === id;
 		})
 	}
 

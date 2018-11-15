@@ -3,12 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
     createUser();
     getPosts();
     document.getElementById("add-post-button").addEventListener("click", Post.addPost)
-
+    document.getElementById("add-comment").addEventListener("click", Post.createComment)
 });
 
 //URLS we will need for getting and posting
-const GET_POSTS_URL = "http://localhost:3000/posts"
-const USER_URL = "http://localhost:3000/users"
+const GET_POSTS_URL = "http://localhost:3000/posts";
+const USER_URL = "http://localhost:3000/users";
+const COMMENTS_URL = "http://localhost:3000/comments"
+const HEADERS = {'Content-Type': 'application/json','Accept': 'application/json'}
 
 
 //Getting posts by location
@@ -55,6 +57,20 @@ function createUser() {
     }
 }
 
-function showCommentForm() {
-    console.log("showCommentForm button");
+function showModal(event) {
+  post = Post.findByPostId(parseInt(event.currentTarget.dataset.post))[0];
+  let modalTitle = document.getElementById("ModalTitle")
+  let modalComments = document.getElementById("modal-comments");
+  modalTitle.innerHTML = post.content
+  modalComments.innerHTML = '';
+  let ul = document.createElement("ul");
+  ul.className = "list-group"
+  post.comments.forEach(comment => {
+    let li = document.createElement('li');
+    li.className = "list-group-item"
+    li.innerHTML = comment.content;
+    ul.appendChild(li);
+  })
+  modalComments.appendChild(ul);
+  document.getElementById("modal-button").click();
 }

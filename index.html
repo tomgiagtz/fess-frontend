@@ -7,7 +7,6 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="src/comment.js" type="text/javascript"> </script>
     <script src="src/post.js" type="text/javascript"> </script>
     <script src="src/index.js" type="text/javascript"> </script>
     <style>
@@ -32,12 +31,49 @@
         margin-right: auto;
         margin-left: auto;
       }
+      textarea {
+        height: 38px;
+      }
     </style>
 </head>
   <body>
 
-    <div class="limit-750">
+    <div class="limit-750"> <!-- This is the container for the app  -->
 
+    <!-- Modal -->
+
+    <!-- Button trigger modal -->
+    <button type="button" class="d-none" data-toggle="modal" data-target="#ModalCenter" id="modal-button"></button>
+
+    <!--  -->
+    <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ModalTitle">Post</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="modal-comments">
+          </div>
+          <div class="modal-footer">
+          <!-- Comment Input and Button -->
+          <div class="input-group">
+              <textarea class="form-control" placeholder="Comment" aria-label="Comment" id="comment-input"></textarea>
+              <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="button" id="add-comment">Add Comment</button>
+                  <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+            <!-- END Comment Input and Button -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+<!-- This is the navigation bar that selects what is shown -->
         <nav>
           <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Nearest</a>
@@ -68,7 +104,7 @@
           </div>
 
         </div>
-
+<!-- End of the Navigation Bar -->
       </div>
   </body>
 </html>
