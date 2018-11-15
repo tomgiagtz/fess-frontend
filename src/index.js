@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     getPosts();
     document.getElementById("add-post-button").addEventListener("click", Post.addPost)
     document.getElementById("add-comment").addEventListener("click", Post.createComment)
+    document.querySelector(".nearest").addEventListener("click", LOCATION.getCurrentPosition(getPostsByLocation))
+    document.querySelector(".recent").addEventListener("click", LOCATION.getCurrentPosition(getRecentPosts))
 });
 
 //URLS we will need for getting and posting
@@ -16,7 +18,8 @@ const HEADERS = {'Content-Type': 'application/json','Accept': 'application/json'
 //Getting posts by location
 function getPosts() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(getPostsByLocation);
+    	LOCATION = navigator.geolocation
+        LOCATION.getCurrentPosition(getPostsByLocation);
     } else {
         fetch(GET_POSTS_URL, {
                 headers: {
@@ -36,12 +39,26 @@ function getPostsByLocation(location) {
             headers: {
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
+                location: "true",
+                nearest: "true"
+            }
+        })
+        .then(res => res.json())
+        .then(json => Post.renderPosts(json, document.getElementById("nearest-container")))
+};
+
+function getRecentPosts(location) {
+    fetch(GET_POSTS_URL, {
+            headers: {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
                 location: "true"
             }
         })
         .then(res => res.json())
-        .then(json => Post.renderPosts(json))
+        .then(json => Post.renderPosts(json, document.getElementById("recent-container")))
 };
+
 
 function getUserId() {
     return parseInt(document.cookie.split('=')[1])

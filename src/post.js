@@ -209,8 +209,7 @@ class Post {
 
 	//renders all posts
 
-	static renderPosts(posts) {
-		let container = document.getElementById("post-container");
+	static renderPosts(posts, container) {
 		posts.forEach(post => {
 			let newPost = new Post(post.content, post.created_at, post.like_count, post.likes, post.id, post.comments)
 			container.appendChild(newPost.render());
