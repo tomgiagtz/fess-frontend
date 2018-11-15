@@ -30,7 +30,7 @@ class Post {
 		button.innerHTML = `Comments <span class="badge badge-primary badge-pill">${this.comments.length}</span>`;
 		button.dataset.post = `${this.id}`;
 		li.dataset.post = `${this.id}`;
-		span.innerHTML = this.time.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " +this.time.toLocaleTimeString('en-US');
+		span.innerHTML = this.time.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " + this.time.toLocaleTimeString('en-US');
 
 
 		li.className = "list-group-item";
@@ -51,14 +51,20 @@ class Post {
 	}
 	//handles logic for a vote event, making the correct database call and rendering the new vote
 	vote(userId, voteType) {
+
 		if (this.currVote.vote === null) {
 			this.newVote(userId, voteType)
 
-		} else if (this.currVote.vote === !voteType) {
-			this.updateVote(voteType)
-
 		} else {
-			this.deleteVote(voteType)
+			fetch('http://localhost:3000/likes/' + this.currVote.id)
+				.then(resp => resp.json())
+				.then(json => console.log(json))
+			if (this.currVote.vote === !voteType) {
+				this.updateVote(voteType)
+
+			} else {
+				this.deleteVote(voteType)
+			}
 		}
 	}
 	//deletes a vote
@@ -107,7 +113,7 @@ class Post {
 				})
 			})
 			.then(resp => resp.json())
-			.then(json => {this.currVote.id = json.id})
+			.then(json => { this.currVote.id = json.id })
 		this.renderVote(voteType)
 		this.currVote.vote = voteType
 	}
@@ -130,11 +136,11 @@ class Post {
 				break
 		}
 
-		
-		
+
+
 
 		let voteLabels = document.querySelectorAll('.likes-' + this.id)
-		voteLabels.forEach(label=> label.innerText = parseInt(label.innerText) + diff)
+		voteLabels.forEach(label => label.innerText = parseInt(label.innerText) + diff)
 
 	}
 
@@ -149,21 +155,21 @@ class Post {
 
 	postComment(content, userId) {
 		fetch(COMMENTS_URL, {
-			method: "POST",
-			headers: HEADERS,
-			body: JSON.stringify({
-				comment: {
-					user_id: userId,
-					post_id: this.id,
-					content: content
-				}
+				method: "POST",
+				headers: HEADERS,
+				body: JSON.stringify({
+					comment: {
+						user_id: userId,
+						post_id: this.id,
+						content: content
+					}
+				})
+			}).then(res => res.json())
+			.then(json => {
+				this.comments.push(json);
+				renderComment(json);
+				// console.log(json);
 			})
-		}).then(res => res.json())
-		.then(json => {
-			this.comments.push(json);
-			renderComment(json);
-			console.log(json);
-		})
 	}
 
 	//returns true for upvote, false for downvote and null for no vote
@@ -211,7 +217,7 @@ class Post {
 	//renders all posts
 
 	static renderPosts(posts, container) {
-		container.innerHtml = ""
+		container.innerHTML = ""
 		posts.forEach(post => {
 			let newPost = new Post(post.content, post.created_at, post.like_count, post.likes, post.id, post.comments)
 			container.appendChild(newPost.render());
@@ -235,9 +241,9 @@ class Post {
 				})
 				.then(res => res.json())
 				.then(json => {
-					let newPost = new Post(json.content, json.created_at, json.like_count, [], json.id)
-					let container = document.getElementById("post-container")
-					container.appendChild(newPost.render());
+					// let newPost = new Post(json.content, json.created_at, json.like_count, [], json.id)
+					// let container = document.getElementById("post-container")
+					// container.appendChild(newPost.render());
 					console.log("Saved in DB");
 					document.getElementById('postcontent').value = ''
 				});
@@ -260,12 +266,12 @@ class Post {
 
 	toggleUpVote(voteDiv = document) {
 		let voteImgs = voteDiv.querySelectorAll('.up-vote-' + this.id)
-		voteImgs.forEach( img => this.toggleVoteImg(img) )
+		voteImgs.forEach(img => this.toggleVoteImg(img))
 	}
 
 	toggleDownVote(voteDiv = document) {
 		let voteImgs = voteDiv.querySelectorAll('.down-vote-' + this.id)
-		voteImgs.forEach( img => this.toggleVoteImg(img) )
+		voteImgs.forEach(img => this.toggleVoteImg(img))
 	}
 	//takes a voteImg and toggles it between filled and not
 	toggleVoteImg(voteImg) {
