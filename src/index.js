@@ -79,7 +79,17 @@ function showModal(event) {
 function renderComment(comment) {
   let ul = document.getElementById("modal-ul");
   let li = document.createElement('li');
+  let p = document.createElement('p');
+  let span = document.createElement('span');
+  let time = new Date(comment.created_at);
+
+  p.innerHTML = comment.content;
+  span.innerHTML = time.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " + time.toLocaleTimeString('en-US');
+
   li.className = "list-group-item"
-  li.innerHTML = comment.content;
+	span.className = "sub-text";
+  
+  li.appendChild(p);
+  li.appendChild(span);
   ul.appendChild(li);
 }
