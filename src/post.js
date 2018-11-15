@@ -38,7 +38,6 @@ class Post {
 		span.className = "sub-text";
 
 		button.addEventListener('click', showModal)
-		li.addEventListener('click', showModal)
 
 		let voteDiv = this.renderVotes()
 		this.setVoteImg(voteDiv)
@@ -52,13 +51,11 @@ class Post {
 	}
 	//handles logic for a vote event, making the correct database call and rendering the new vote
 	vote(userId, voteType) {
-		voteType ? this.toggleUpVote() : this.toggleDownVote()
 		if (this.currVote.vote === null) {
 			this.newVote(userId, voteType)
 
 		} else if (this.currVote.vote === !voteType) {
 			this.updateVote(voteType)
-			!voteType ? this.toggleUpVote() : this.toggleDownVote()
 
 		} else {
 			this.deleteVote(voteType)
@@ -119,6 +116,7 @@ class Post {
 	//takes the current vote and new vote
 	renderVote(newVote) {
 		let diff = 0;
+		newVote ? this.toggleUpVote() : this.toggleDownVote()
 		switch (this.currVote.vote) {
 			case null:
 				newVote ? diff = 1 : diff = -1
@@ -127,13 +125,16 @@ class Post {
 				newVote ? diff = -1 : diff = 1
 				break
 			case !newVote:
-
+				!newVote ? this.toggleUpVote() : this.toggleDownVote()
 				newVote ? diff = 2 : diff = -2
 				break
 		}
 
-		let voteLabel = document.querySelector('#likes-' + this.id)
-		voteLabel.innerText = parseInt(voteLabel.innerText) + diff
+		
+		
+
+		let voteLabels = document.querySelectorAll('#likes-' + this.id)
+		voteLabels.forEach(label=> label.innerText = parseInt(label.innerText) + diff)
 
 	}
 
@@ -210,6 +211,7 @@ class Post {
 	//renders all posts
 
 	static renderPosts(posts, container) {
+		container.innerHtml = ""
 		posts.forEach(post => {
 			let newPost = new Post(post.content, post.created_at, post.like_count, post.likes, post.id, post.comments)
 			container.appendChild(newPost.render());
@@ -257,13 +259,13 @@ class Post {
 	// toggle Up and toggle Down select the vote img for respective buttons
 
 	toggleUpVote(voteDiv = document) {
-		let voteImg = voteDiv.querySelector('#up-vote-' + this.id)
-		this.toggleVoteImg(voteImg)
+		let voteImgs = voteDiv.querySelectorAll('#up-vote-' + this.id)
+		voteImgs.forEach( img => this.toggleVoteImg(img) )
 	}
 
 	toggleDownVote(voteDiv = document) {
-		let voteImg = voteDiv.querySelector('#down-vote-' + this.id)
-		this.toggleVoteImg(voteImg)
+		let voteImgs = voteDiv.querySelectorAll('#down-vote-' + this.id)
+		voteImgs.forEach( img => this.toggleVoteImg(img) )
 	}
 	//takes a voteImg and toggles it between filled and not
 	toggleVoteImg(voteImg) {
