@@ -27,16 +27,18 @@ class Post {
 		let button = document.createElement("button")
 
 		p.innerHTML = this.content;
-		button.innerHTML = "Comment";
+		button.innerHTML = `Comments <span class="badge badge-primary badge-pill">${this.comments.length}</span>`;
 		button.dataset.post = `${this.id}`;
-		span.innerHTML = this.time.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+		li.dataset.post = `${this.id}`;
+		span.innerHTML = this.time.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " +this.time.toLocaleTimeString('en-US');
 
 
 		li.className = "list-group-item";
-		button.className = "btn btn-warning";
+		button.className = "btn btn-primary btn-sm float-right";
 		span.className = "sub-text";
 
 		button.addEventListener('click', showModal)
+		li.addEventListener('click', showModal)
 
 		let voteDiv = this.renderVotes()
 		this.setVoteImg(voteDiv)
@@ -44,7 +46,7 @@ class Post {
 		li.appendChild(p);
 		li.appendChild(span)
 		li.appendChild(voteDiv)
-		li.appendChild(button);
+		voteDiv.appendChild(button);
 
 		return li;
 	}
@@ -158,7 +160,7 @@ class Post {
 		}).then(res => res.json())
 		.then(json => {
 			this.comments.push(json);
-			renderComment(json, this);
+			renderComment(json);
 			console.log(json);
 		})
 	}

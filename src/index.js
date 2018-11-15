@@ -61,31 +61,24 @@ function showModal(event) {
   post = Post.findByPostId(parseInt(event.currentTarget.dataset.post))[0];
 
   let modalTitle = document.getElementById("ModalTitle")
-  let modalComments = document.getElementById("modal-comments");
   let addComment = document.getElementById("add-comment");
-  let ul = document.createElement("ul");
+  let ul = document.getElementById("modal-ul");
+
 
   modalTitle.innerHTML = post.content
-  modalComments.innerHTML = '';
+  ul.innerHTML = '';
   addComment.dataset.post = `${post.id}`;
-  ul.className = "list-group"
-  ul.id = "modalUl"
 
   post.comments.forEach(comment => {
-    let li = document.createElement('li');
-    li.className = "list-group-item"
-    li.innerHTML = comment.content;
-    ul.appendChild(li);
+    renderComment(comment);
   })
-
-  modalComments.appendChild(ul);
 
   document.getElementById("modal-button").click();
 }
 
-function renderComment(comment, userId) {
+function renderComment(comment) {
+  let ul = document.getElementById("modal-ul");
   let li = document.createElement('li');
-  let ul = document.getElementById("modalUl");
   li.className = "list-group-item"
   li.innerHTML = comment.content;
   ul.appendChild(li);
