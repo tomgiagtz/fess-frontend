@@ -69,6 +69,7 @@ function showModal(event) {
   modalComments.innerHTML = '';
   addComment.dataset.post = `${post.id}`;
   ul.className = "list-group"
+  ul.id = "modalUl"
 
   post.comments.forEach(comment => {
     let li = document.createElement('li');
@@ -83,5 +84,9 @@ function showModal(event) {
 }
 
 function renderComment(comment, userId) {
-
+  let li = document.createElement('li');
+  let ul = document.getElementById("modalUl");
+  li.className = "list-group-item"
+  li.innerHTML = comment.content;
+  ul.appendChild(li);
 }

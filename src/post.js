@@ -137,12 +137,12 @@ class Post {
 
 	static createComment(event) {
 		let content = event.currentTarget.parentElement.parentElement.children["comment-input"].value;
+		// Need to add
 		let userId = document.cookie.split('=')[1];
-		let postId;
-		debugger;
-		// postComment(content, userId);
-		// renderComment(content, userId);
+		let post = Post.findByPostId(parseInt(event.currentTarget.dataset.post))[0];
+		post.postComment(content, userId);
 	}
+
 
 	postComment(content, userId) {
 		fetch(COMMENTS_URL, {
@@ -157,6 +157,8 @@ class Post {
 			})
 		}).then(res => res.json())
 		.then(json => {
+			this.comments.push(json);
+			renderComment(json, this);
 			console.log(json);
 		})
 	}
