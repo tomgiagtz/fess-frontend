@@ -40,7 +40,7 @@ function getPostsByLocation(location) {
             }
         })
         .then(res => res.json())
-        .then(Post.renderPosts)
+        .then(json => Post.renderPosts(json))
 };
 
 function getUserId() {
