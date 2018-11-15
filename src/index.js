@@ -74,3 +74,7 @@ function showModal(event) {
   modalComments.appendChild(ul);
   document.getElementById("modal-button").click();
 }
+
+function renderComment(comment) {
+
+}
