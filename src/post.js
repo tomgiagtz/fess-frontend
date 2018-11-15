@@ -223,8 +223,8 @@ class Post {
 				.then(res => res.json())
 				.then(json => {
 					let newPost = new Post(json.content, json.created_at, json.like_count, [], json.id)
-					let container = document.getElementById("post-container")
-					container.appendChild(newPost.render());
+					let container = document.getElementById("recent-container")
+					container.prepend(newPost.render());
 					console.log("Saved in DB");
 					document.getElementById('postcontent').value = ''
 				});
