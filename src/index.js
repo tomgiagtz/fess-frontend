@@ -55,7 +55,6 @@ function getPostsByLocation(location) {
 		.then(res => res.json())
 		.then(json => {
 			let container = document.getElementById("nearest-container")
-			// clearChildren(container)
 			Post.renderPosts(json, container)
 		})
 };
@@ -72,57 +71,12 @@ function getRecentPosts(location) {
 		.then(res => res.json())
 		.then(json => {
 			let container = document.getElementById("recent-container")
-			// clearChildren(container)
 			Post.renderPosts(json, container)
 		})
 
-	//     if (navigator.geolocation) {
-	//     	LOCATION = navigator.geolocation
-	//         LOCATION.getCurrentPosition(getPostsByLocation);
-	//     } else {
-	//       window.alert("Your browswer does not support location")
-	//       throw "Browser does not have location"
-	//     }
-	// };
-
-	// function getPostsByLocation(location) {
-	//     fetch(postURL(), {
-	//             headers: {
-	//                 latitude: location.coords.latitude,
-	//                 longitude: location.coords.longitude,
-	//                 location: "true",
-	//                 nearest: "true"
-	//             }
-	//         })
-	//         .then(res => res.json())
-	//         .then(json => Post.renderPosts(json, document.getElementById("nearest-container")))
-	//         .catch(error => {
-	//           throw "Error in getPostsByLocation"
-	//           throw error
-	//         })
-	// };
-
-	// function getRecentPosts(location) {
-	//     fetch(postURL(), {
-	//             headers: {
-	//                 latitude: location.coords.latitude,
-	//                 longitude: location.coords.longitude,
-	//                 location: "true"
-	//             }
-	//         })
-	//         .then(res => res.json())
-	//         .then(json => Post.renderPosts(json, document.getElementById("recent-container")))
 }
 
-// function clearChildren(node) {
-// 	// let firstChild = node.firstChild
-// 	// while (firstChild) {
-// 	// 	node.remove(firstChild)
-// 	// 	firstChild = node.firstChild
-// 	// 	console.log('woop')
-// 	// }
-// 	node.innerHTML = ''
-// }
+
 
 
 function getUserId() {

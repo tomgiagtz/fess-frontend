@@ -60,14 +60,11 @@ class Post {
 
 	//deletes a vote
 	deleteVote(voteType) {
-		console.log('delete')
-		console.trace()
 		fetch(`${likeURL()}/${this.currVote.id}`, {
 				method: 'delete'
 			})
 			.then(resp => resp.json())
 			.then(json => {
-				// console.log(json)
 				this.currVote.vote = null;
 			})
 		this.renderVote(voteType)
@@ -75,7 +72,6 @@ class Post {
 	}
 	//executes put for changing a vote
 	updateVote(voteType) {
-		console.log('put')
 		fetch(likeURL() + '/' + this.currVote.id, {
 				body: JSON.stringify({ id: this.currVote.id }),
 				method: 'put',
@@ -83,14 +79,12 @@ class Post {
 			})
 			.then(resp => resp.json())
 			.then(json => {
-				// console.log(json)
 			})
 		this.renderVote(voteType)
 		this.currVote.vote = voteType
 	}
 	// executes POST for new vote
 	newVote(userId, voteType) {
-		console.log('create')
 		fetch(likeURL(), {
 				method: 'post',
 				headers: headers(),
