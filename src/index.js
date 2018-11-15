@@ -59,22 +59,29 @@ function createUser() {
 
 function showModal(event) {
   post = Post.findByPostId(parseInt(event.currentTarget.dataset.post))[0];
+
   let modalTitle = document.getElementById("ModalTitle")
   let modalComments = document.getElementById("modal-comments");
+  let addComment = document.getElementById("add-comment");
+  let ul = document.createElement("ul");
+
   modalTitle.innerHTML = post.content
   modalComments.innerHTML = '';
-  let ul = document.createElement("ul");
+  addComment.dataset.post = `${post.id}`;
   ul.className = "list-group"
+
   post.comments.forEach(comment => {
     let li = document.createElement('li');
     li.className = "list-group-item"
     li.innerHTML = comment.content;
     ul.appendChild(li);
   })
+
   modalComments.appendChild(ul);
+
   document.getElementById("modal-button").click();
 }
 
-function renderComment(comment) {
+function renderComment(comment, userId) {
 
 }

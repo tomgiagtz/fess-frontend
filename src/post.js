@@ -80,8 +80,11 @@ class Post {
 
 	static createComment(event) {
 		let content = event.currentTarget.parentElement.parentElement.children["comment-input"].value;
-		// postComment(content, 1)
-		//render comment would be nexy
+		let userId = document.cookie.split('=')[1];
+		let postId;
+		debugger;
+		// postComment(content, userId);
+		// renderComment(content, userId);
 	}
 
 	postComment(content, userId) {
