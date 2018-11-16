@@ -1,11 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
 	console.log("Connected");
+	navigator.geolocation.getCurrentPosition(p => {
+		getPostsByLocation(p);
+		LOCATION = p;
+	});
 	createUser();
-	getPosts();
 	document.getElementById("add-post-button").addEventListener("click", Post.addPost)
 	document.getElementById("add-comment").addEventListener("click", Post.createComment)
-	document.querySelector(".nearest").addEventListener("click", e => LOCATION.getCurrentPosition(getPostsByLocation)) //
-	document.querySelector(".recent").addEventListener("click", e => LOCATION.getCurrentPosition(getRecentPosts))
+	document.querySelector(".nearest").addEventListener("click", e => getPostsByLocation(LOCATION))
+	document.querySelector(".recent").addEventListener("click", e => getRecentPosts(LOCATION))
 });
 
 //URLS we will need for getting and posting
@@ -21,17 +24,17 @@ function userURL() { return "http://localhost:3000/users" }
 function commentURL() { return "http://localhost:3000/comments" }
 
 
+
 //Getting posts by location
-function getPosts() {
-	if (navigator.geolocation) {
-		LOCATION = navigator.geolocation
-		LOCATION.getCurrentPosition(getPostsByLocation)
+function getPosts(location) {
+	if (location) {
+		LOCATION(getPostsByLocation)
 	} else {
 		fetch(postURL(), {
 				headers: {
 					latitude: location.coords.latitude,
 					longitude: location.coords.longitude,
-					location: "true"
+					location: "false"
 				}
 			})
 			.then(res => res.json())
