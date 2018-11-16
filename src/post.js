@@ -25,7 +25,7 @@ class Post {
 		button.innerHTML = `Comments <span class="badge badge-primary badge-pill">${this.comments.length}</span>`;
 		button.dataset.post = `${this.id}`;
 		li.dataset.post = `${this.id}`;
-		span.innerHTML = this.time.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " +this.time.toLocaleTimeString('en-US');
+		span.innerHTML = this.time.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " + this.time.toLocaleTimeString('en-US');
 
 
 		li.className = "list-group-item";
@@ -46,6 +46,7 @@ class Post {
 	}
 	//handles logic for a vote event, making the correct database call and rendering the new vote
 	vote(userId, voteType) {
+
 		if (this.currVote.vote === null) {
 			this.newVote(userId, voteType)
 
@@ -56,37 +57,34 @@ class Post {
 			this.deleteVote(voteType)
 		}
 	}
+
 	//deletes a vote
 	deleteVote(voteType) {
-		console.log('delete')
 		fetch(`${likeURL()}/${this.currVote.id}`, {
 				method: 'delete'
 			})
 			.then(resp => resp.json())
 			.then(json => {
-				// console.log(json)
+				this.currVote.vote = null;
 			})
 		this.renderVote(voteType)
-		this.currVote.vote = null;
+
 	}
 	//executes put for changing a vote
 	updateVote(voteType) {
-		console.log('put')
-		fetch(`${likeURL()}/${this.currVote.id}`, {
+		fetch(likeURL() + '/' + this.currVote.id, {
 				body: JSON.stringify({ id: this.currVote.id }),
 				method: 'put',
 				headers: headers()
 			})
 			.then(resp => resp.json())
 			.then(json => {
-				// console.log(json)
 			})
 		this.renderVote(voteType)
 		this.currVote.vote = voteType
 	}
 	// executes POST for new vote
 	newVote(userId, voteType) {
-		console.log('create')
 		fetch(likeURL(), {
 				method: 'post',
 				headers: headers(),
@@ -99,7 +97,7 @@ class Post {
 				})
 			})
 			.then(resp => resp.json())
-			.then(json => {this.currVote.id = json.id})
+			.then(json => { this.currVote.id = json.id })
 		this.renderVote(voteType)
 		this.currVote.vote = voteType
 	}
@@ -122,8 +120,9 @@ class Post {
 				break
 		}
 
-		let voteLabels = document.querySelectorAll('#likes-' + this.id)
-		voteLabels.forEach(label=> label.innerText = parseInt(label.innerText) + diff)
+
+		let voteLabels = document.querySelectorAll('.likes-' + this.id)
+		voteLabels.forEach(label => label.innerText = parseInt(label.innerText) + diff)
 
 	}
 
@@ -137,23 +136,23 @@ class Post {
 
 	postComment(content, userId) {
 		fetch(commentURL(), {
-			method: "POST",
-			headers: headers(),
-			body: JSON.stringify({
-				comment: {
-					user_id: userId,
-					post_id: this.id,
-					content: content
-				}
+				method: "POST",
+				headers: headers(),
+				body: JSON.stringify({
+					comment: {
+						user_id: userId,
+						post_id: this.id,
+						content: content
+					}
+				})
+			}).then(res => res.json())
+			.then(json => {
+				this.comments.push(json);
+				renderComment(json);
+				document.getElementById("comment-input").value = "";
+			}).catch(e => {
+				window.alert("Your comment did not go through");
 			})
-		}).then(res => res.json())
-		.then(json => {
-			this.comments.push(json);
-			renderComment(json);
-			document.getElementById("comment-input").value = "";
-		}).catch(e => {
-			window.alert("Your comment did not go through");
-		})
 	}
 
 	//returns true for upvote, false for downvote and null for no vote
@@ -178,18 +177,18 @@ class Post {
 		let voteDiv = document.createElement("div")
 
 		let upVoteBtn = document.createElement("img");
-		upVoteBtn.id = 'up-vote-' + this.id
+		upVoteBtn.className = 'up-vote-' + this.id
 		upVoteBtn.src = "img/arrow-up-outline.svg";
 		upVoteBtn.addEventListener('click', e => this.vote(getUserId(), true));
 
 		let downVoteBtn = document.createElement("img");
-		downVoteBtn.id = 'down-vote-' + this.id
+		downVoteBtn.className = 'down-vote-' + this.id
 		downVoteBtn.src = "img/arrow-down-outline.svg";
 		downVoteBtn.addEventListener('click', e => this.vote(getUserId(), false));
 
 		let likeLabel = document.createElement("label");
 		likeLabel.innerHTML = `${this.likeCount}`;
-		likeLabel.id = 'likes-' + this.id
+		likeLabel.className = 'likes-' + this.id
 
 		voteDiv.appendChild(upVoteBtn)
 		voteDiv.appendChild(likeLabel)
@@ -201,7 +200,7 @@ class Post {
 	//renders all posts
 
 	static renderPosts(posts, container) {
-		container.innerHtml = ""
+		container.innerHTML = ""
 		posts.forEach(post => {
 			let newPost = new Post(post.content, post.created_at, post.like_count, post.likes, post.id, post.comments)
 			container.appendChild(newPost.render());
@@ -222,9 +221,9 @@ class Post {
 				})
 				.then(res => res.json())
 				.then(json => {
-					let newPost = new Post(json.content, json.created_at, json.like_count, [], json.id)
-					let container = document.getElementById("recent-container")
-					container.prepend(newPost.render());
+					// let newPost = new Post(json.content, json.created_at, json.like_count, [], json.id)
+					// let container = document.getElementById("post-container")
+					// container.appendChild(newPost.render());
 					console.log("Saved in DB");
 					document.getElementById('postcontent').value = ''
 				});
@@ -246,13 +245,13 @@ class Post {
 	// toggle Up and toggle Down select the vote img for respective buttons
 
 	toggleUpVote(voteDiv = document) {
-		let voteImgs = voteDiv.querySelectorAll('#up-vote-' + this.id)
-		voteImgs.forEach( img => this.toggleVoteImg(img) )
+		let voteImgs = voteDiv.querySelectorAll('.up-vote-' + this.id)
+		voteImgs.forEach(img => this.toggleVoteImg(img))
 	}
 
 	toggleDownVote(voteDiv = document) {
-		let voteImgs = voteDiv.querySelectorAll('#down-vote-' + this.id)
-		voteImgs.forEach( img => this.toggleVoteImg(img) )
+		let voteImgs = voteDiv.querySelectorAll('.down-vote-' + this.id)
+		voteImgs.forEach(img => this.toggleVoteImg(img))
 	}
 	//takes a voteImg and toggles it between filled and not
 	toggleVoteImg(voteImg) {
