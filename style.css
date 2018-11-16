@@ -36,3 +36,22 @@ header {
 body {
   background-color: #D3D3D3;
 }
+
+#ModalCenter {
+  margin-top: 10%;
+  margin-bottom: 10%;
+  overflow: scroll;
+}
+
+.modal-header {
+}
+
+#modal-comments {
+  overflow: scroll;
+  max-height: 400px;
+
+}
+
+#comment-box {
+  postion: fixed;
+}
