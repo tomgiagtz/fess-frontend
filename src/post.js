@@ -22,7 +22,7 @@ class Post {
 		let button = document.createElement("button")
 
 		p.innerHTML = this.content;
-		button.innerHTML = `Comments <span class="badge badge-primary badge-pill">${this.comments.length}</span>`;
+		button.innerHTML = `Comments <span data-commentpost="${this.id}" class="badge badge-primary badge-pill">${this.comments.length}</span>`;
 		button.dataset.post = `${this.id}`;
 		li.dataset.post = `${this.id}`;
 		span.innerHTML = this.time.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " + this.time.toLocaleTimeString('en-US');
@@ -130,9 +130,9 @@ class Post {
 		let content = event.currentTarget.parentElement.parentElement.children["comment-input"].value;
 		let userId = document.cookie.split('=')[1];
 		let post = Post.findByPostId(parseInt(event.currentTarget.dataset.post))[0];
+		document.querySelector(`[data-commentpost="${post.id}"]`).innerHTML++;
 		post.postComment(content, userId);
 	}
-
 
 	postComment(content, userId) {
 		fetch(commentURL(), {
@@ -226,6 +226,7 @@ class Post {
 					// container.appendChild(newPost.render());
 					console.log("Saved in DB");
 					document.getElementById('postcontent').value = ''
+					document.getElementById("nav-profile-tab").click();
 				});
 		})
 	}
