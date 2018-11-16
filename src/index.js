@@ -79,9 +79,6 @@ function getRecentPosts(location) {
 
 }
 
-
-
-
 function getUserId() {
 	return parseInt(document.cookie.split('=')[1])
 }

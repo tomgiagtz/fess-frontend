@@ -133,7 +133,6 @@ class Post {
 		post.postComment(content, userId);
 	}
 
-
 	postComment(content, userId) {
 		fetch(commentURL(), {
 				method: "POST",
@@ -226,6 +225,7 @@ class Post {
 					// container.appendChild(newPost.render());
 					console.log("Saved in DB");
 					document.getElementById('postcontent').value = ''
+					document.getElementById("nav-profile-tab").click();
 				});
 		})
 	}
